@@ -1,39 +1,285 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba de JavaScript en iPhone</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      min-width: 0;
+      font: inherit;
+    }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    img,
+    video,
+    svg {
+      display: block;
+      height: auto;
+      max-width: 100%;
+    }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background-color: #fad7df;
+      overflow: hidden;
+      font-family: 'Quicksand', sans-serif;
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container-letter {
+      position: relative;
+    }
+    .cover {
+      position: absolute;
+      border-left: 200px solid transparent;
+      border-right: 200px solid transparent;
+      border-top: 100px solid #fe3334;
+      border-bottom: 100px solid transparent;
+      transition: transform 0.75s, opacity 0.5s;
+      transform-origin: top;
+    }
+    .paper {
+      position: absolute;
+      padding: 1.5rem;
+      line-height: 2rem;
+      right: 5px;
+      z-index: -1;
+      background: white;
+      width: 390px;
+      height: 180px;
+      transition: all 0.75s;
+      opacity: 0;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      color: #fe3334;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(254, 51, 52, 0.1);
+    }
+    .letter {
+      border-left: 200px solid #ff989e;
+      border-right: 200px solid #ff989e;
+      border-top: 100px solid transparent;
+      border-bottom: 100px solid #ff858a;
+      transition: opacity 0.75s;
+    }
+    .options {
+      display: flex;
+      gap: 5rem;
+    }
+    .options button {
+      color: #ff3234;
+      font-weight: 600;
+      border-radius: 3px;
+      background: #fad7df;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #fe3334;
+      cursor: pointer;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(254, 51, 52, 0.2);
+    }
+    .options button:hover {
+      background: #ff989e;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(254, 51, 52, 0.3);
+    }
+    .open-cover {
+      transform: rotateX(180deg);
+      opacity: 0;
+    }
+    .open-paper {
+      opacity: 1;
+      transform: translateY(-5px);
+    }
+    .hide-letter {
+      opacity: 0;
+    }
+    .heart {
+      display: none;
+      position: absolute;
+      top: 25%;
+      left: 46.5%;
+      font-size: 3rem;
+      color: #fe3334;
+      animation: crecer 1s forwards;
+    }
+    .hidden {
+      display: none;
+    }
+    #noBtn {
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      pointer-events: none;
+    }
+    .final-message {
+      font-size: 1.8rem !important;
+      font-weight: 700;
+      background: linear-gradient(45deg, #fe3334, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes crecer {
+      0% { scale: 1; opacity: 1; }
+      100% { scale: 3; opacity: 0; }
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 <body>
+  <main>
+    <div class="container-letter">
+      <div class="cover"></div>
+      <span class="heart">♥</span>
+      <p class="paper" id="mainMessage">
+        Mi querido amor, este año quiero preguntarte algo muy especial...
+      </p>
+      <div class="letter"></div>
+    </div>
+    <div class="options">
+      <button id="open">Abrir ✨</button>
+      <button id="clickHere" class="hidden">Haz click aquí 💝</button>
+      <button id="siBtn" class="hidden">¡Sí! 💖</button>
+      <button id="noBtn" class="hidden">Ño 💔</button>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    function createFallingElements() {
+      const colors = ['#ff0000', '#ff69b4', '#ff1493', '#ff69b4', '#ff00ff'];
+      const elements = ['❤️', '💖', '💕', '💞', '💓'];
+      const confettiCount = 50;
 
-    <h1>Prueba de JavaScript en iPhone</h1>
-    <p id="mensaje">Si ves este texto, JavaScript debería estar funcionando.</p>
-    <button onclick="cambiarTexto()">Haz clic para probar</button>
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        const startPositionLeft = Math.random() * window.innerWidth;
+        
+        confetti.style.left = startPositionLeft + 'px';
+        confetti.style.top = '-10px';
+        confetti.style.backgroundColor = 'transparent';
+        confetti.style.width = '20px';
+        confetti.style.height = '20px';
+        confetti.innerHTML = elements[Math.floor(Math.random() * elements.length)];
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        
+        confetti.style.animation = `fall ${Math.random() * 2 + 3}s linear forwards`;
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+          confetti.remove();
+        }, 5000);
+      }
+    }
 
-    <script>
-        // Prueba de alerta
-        alert("JavaScript está funcionando en tu iPhone.");
+    function lanzarConfeti() {
+      confetti({
+        particleCount: 200,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
 
-        function cambiarTexto() {
-            document.getElementById("mensaje").innerText = "¡JavaScript está funcionando correctamente!";
-        }
+    const btnOpenElement = document.querySelector('#open');
+    const clickHereBtn = document.querySelector('#clickHere');
+    const siBtnElement = document.querySelector('#siBtn');
+    const noBtnElement = document.querySelector('#noBtn');
+    const mainMessageElement = document.querySelector('#mainMessage');
 
-        // Prueba de console.log en la consola del navegador
-        console.log("Si ves esto en la consola, JavaScript está activo.");
-    </script>
+    btnOpenElement.addEventListener('click', () => {
+      const coverElement = document.querySelector('.cover');
+      const paperElement = document.querySelector('.paper');
+      const letterElement = document.querySelector('.letter');
+      
+      coverElement.classList.add('open-cover');
+      letterElement.classList.add('hide-letter');
+      btnOpenElement.classList.add('hidden');
+      clickHereBtn.classList.remove('hidden');
+      
+      setTimeout(() => {
+        paperElement.classList.add('open-paper');
+        const heartElement = document.querySelector('.heart');
+        heartElement.style.display = 'block';
+      }, 500);
+    });
+
+    clickHereBtn.addEventListener('click', () => {
+      mainMessageElement.textContent = "¿Mi amorcito Brisa, me concederías el honor de ser mi San Valentín de este y de muchos años más? 💝";
+      clickHereBtn.classList.add('hidden');
+      siBtnElement.classList.remove('hidden');
+      noBtnElement.classList.remove('hidden');
+    });
+
+    noBtnElement.addEventListener('mouseover', (e) => {
+      const x = Math.random() * (window.innerWidth - noBtnElement.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtnElement.offsetHeight);
+      
+      noBtnElement.style.position = 'fixed';
+      noBtnElement.style.left = `${x}px`;
+      noBtnElement.style.top = `${y}px`;
+    });
+
+    siBtnElement.addEventListener('click', () => {
+      mainMessageElement.textContent = "Sabía que dirías que sí mi amor. Te quiero muchísimo ❤️";
+      mainMessageElement.classList.add('final-message');
+      noBtnElement.classList.add('hidden');
+      lanzarConfeti();
+      createFallingElements();
+    });
+  </script>
+  <script>
+    function moveNoButton() {
+      const x = Math.random() * (window.innerWidth - noBtnElement.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtnElement.offsetHeight);
+  
+      noBtnElement.style.position = 'fixed';
+      noBtnElement.style.left = `${x}px`;
+      noBtnElement.style.top = `${y}px`;
+    }
+  
+    noBtnElement.addEventListener('mouseover', moveNoButton);
+    noBtnElement.addEventListener('click', moveNoButton);
+  </script>
+  
 
 </body>
 </html>
