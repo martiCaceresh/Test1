@@ -1,1 +1,39 @@
-<h1>Esto es una prueba</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de JavaScript en iPhone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Prueba de JavaScript en iPhone</h1>
+    <p id="mensaje">Si ves este texto, JavaScript debería estar funcionando.</p>
+    <button onclick="cambiarTexto()">Haz clic para probar</button>
+
+    <script>
+        // Prueba de alerta
+        alert("JavaScript está funcionando en tu iPhone.");
+
+        function cambiarTexto() {
+            document.getElementById("mensaje").innerText = "¡JavaScript está funcionando correctamente!";
+        }
+
+        // Prueba de console.log en la consola del navegador
+        console.log("Si ves esto en la consola, JavaScript está activo.");
+    </script>
+
+</body>
+</html>
